@@ -1,4 +1,6 @@
-# MagicMirror-Module-Template
+# MTA Bustime Module for Magic Mirror
+
+Currently in development, as soon as MTA gives me the API key. 
 This is a module to help developers to start building their own modules for the [MagicMirror](https://github.com/MichMich/MagicMirror). 
 
 There samples of code for:
