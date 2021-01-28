@@ -7,8 +7,20 @@
  * {{LICENSE}} Licensed.
  */
 
-Module.register("{{mta-mta-BusTIme}}", {
+Module.register("{{MM-mtaBusTIme}}", {
   defaults: {
+    module: "MM-mtaBusTime",
+    position: "top_bar",
+    header: "Bus Arrival Times",
+    stations: [
+      {
+        stationId: 69,
+      },
+
+      {
+        stationID: 420,
+      },
+    ],
     updateInterval: 60000,
     retryDelay: 5000,
   },
