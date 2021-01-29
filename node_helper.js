@@ -10,44 +10,38 @@ var NodeHelper = require("node_helper");
 const axios = require("axios").default; // library to help with GET requests
 
 module.exports = NodeHelper.create({
-  // Override socketNotificationReceived method.
-
-  /* socketNotificationReceived(notification, payload)
-   * This method is called when a socket notification arrives.
-   *
-   * argument notification string - The identifier of the noitication.
-   * argument payload mixed - The payload of the notification.
-   */
-  socketNotificationReceived: function (notification, payload) {
-    if (notification === "{{MODULE_NAME}}-NOTIFICATION_TEST") {
-      console.log(
-        "Working notification system. Notification:",
-        notification,
-        "payload: ",
-        payload
-      );
-      // Send notification
-      this.sendNotificationTest(this.anotherFunction()); //Is possible send objects :)
-    }
-  },
-
-  // Example function send notification test
-  sendNotificationTest: function (payload) {
-    this.sendSocketNotification("{{MODULE_NAME}}-NOTIFICATION_TEST", payload);
-  },
-
-  // this you can create extra routes for your module
-  extraRoutes: function () {
-    var self = this;
-    this.expressApp.get("/{{MODULE_NAME}}/extra_route", function (req, res) {
-      // call another function
-      values = self.anotherFunction();
-      res.send(values);
-    });
-  },
-
   // Test another function
-  anotherFunction: function () {
-    return { date: new Date() };
+  start: function () {
+    console.log("hello world");
+  },
+
+  getArrivalData: function (config) {
+    var apiKey = config.apiKey;
+    var stopID = config.stop;
+    var direction = config.direction;
+    var busRoute = config.busRoute;
+    var busTimeURL = "http://bustime.mta.info/api/siri/stop-monitoring.json";
+
+    var apiParams = {
+      key: apiKey,
+      version: 2,
+      OperatorRef: "MTA",
+      MonitoringRef: stopID,
+      LineRef: busRoute,
+      DirectionRef: direction,
+    };
+
+    function handleSuccess(data) {
+      console.log(data);
+    }
+    function handleFailure(data) {
+      console.log("error", data);
+    }
+    axios
+      .get(busTimeURL, {
+        params: apiParams,
+      })
+      .then(handleSuccess)
+      .catch(handleFailure);
   },
 });

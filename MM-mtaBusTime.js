@@ -14,11 +14,11 @@ Module.register("{{MM-mtaBusTIme}}", {
     header: "Bus Arrival Times",
     stations: [
       {
-        stationId: 69,
+        stopId: 69,
       },
 
       {
-        stationID: 420,
+        stopID: 420,
       },
     ],
     updateInterval: 60000,
