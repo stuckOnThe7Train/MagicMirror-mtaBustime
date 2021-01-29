@@ -18,5 +18,8 @@
     "stylelint": "latest",
     "stylelint-config-standard": "latest",
     "time-grunt": "latest"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }

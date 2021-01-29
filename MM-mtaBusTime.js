@@ -133,7 +133,7 @@ Module.register("{{MM-mtaBusTIme}}", {
   },
 
   getStyles: function () {
-    return ["{{MODULE_NAME}}.css"];
+    return ["MM-mtaBusTime.css"];
   },
 
   // Load translations files
