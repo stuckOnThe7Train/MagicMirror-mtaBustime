@@ -9,6 +9,17 @@ var NodeHelper = require("node_helper");
 
 const axios = require("axios").default; // library to help with GET requests
 
+var directionDict = []; // Use a dict to map uptown to 0 and downtown to 1
+directionDict.push({
+  key: "uptown",
+  value: 0,
+});
+
+directionDict.push({
+  key: "downtown",
+  value: 1,
+});
+
 module.exports = NodeHelper.create({
   // Test another function
   start: function () {
@@ -16,19 +27,19 @@ module.exports = NodeHelper.create({
   },
 
   getArrivalData: function (config) {
-    var apiKey = config.apiKey;
-    var stopID = config.stop;
-    var direction = config.direction;
-    var busRoute = config.busRoute;
-    var busTimeURL = "http://bustime.mta.info/api/siri/stop-monitoring.json";
+    const apiKey = config.apiKey;
+    const stopID = config.stopID;
+    const direction = config.direction;
+    const busRoute = config.busRoute;
+    const busTimeURL = "http://bustime.mta.info/api/siri/stop-monitoring.json";
 
-    var apiParams = {
+    const apiParams = {
       key: apiKey,
       version: 2,
       OperatorRef: "MTA",
       MonitoringRef: stopID,
       LineRef: busRoute,
-      DirectionRef: direction,
+      DirectionRef: directionDict[direction],
     };
 
     function handleSuccess(data) {
