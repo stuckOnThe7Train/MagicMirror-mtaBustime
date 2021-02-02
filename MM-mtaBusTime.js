@@ -3,22 +3,24 @@
 /* Magic Mirror
  * Module: {{MM-mta-Bustime}}
  *
- * By {{Fangzhou Yu and Benjamin Huang}}
- * {{LICENSE}} Licensed.
+ * By Fangzhou Yu and Benjamin Huang
+ *  MIT Licensed.
  */
 
-Module.register("{{MM-mtaBusTIme}}", {
+Module.register("MM-mtaBusTIme", {
   defaults: {
     module: "MM-mtaBusTime",
     position: "top_bar",
     header: "Bus Arrival Times",
-    stations: [
+    stops: [
       {
         stopId: 69,
+        direction: "uptown", //direction options: uptown or downtown
       },
 
       {
         stopID: 420,
+        direction: "downtownm",
       },
     ],
     updateInterval: 60000,
@@ -29,9 +31,6 @@ Module.register("{{MM-mtaBusTIme}}", {
 
   start: function () {
     var self = this;
-    var dataRequest = null;
-    var dataNotification = null;
-
     //Flag for check if module is loaded
     this.loaded = false;
 
@@ -50,32 +49,8 @@ Module.register("{{MM-mtaBusTIme}}", {
    */
 
   getData: function () {
-    var self = this;
-
-    var urlApi = "https://jsonplaceholder.typicode.com/posts/1";
-    var retry = true;
-
-    var dataRequest = new XMLHttpRequest();
-    dataRequest.open("GET", urlApi, true);
-    dataRequest.onreadystatechange = function () {
-      console.log(this.readyState);
-      if (this.readyState === 4) {
-        console.log(this.status);
-        if (this.status === 200) {
-          self.processData(JSON.parse(this.response));
-        } else if (this.status === 401) {
-          self.updateDom(self.config.animationSpeed);
-          Log.error(self.name, this.status);
-          retry = false;
-        } else {
-          Log.error(self.name, "Could not load data.");
-        }
-        if (retry) {
-          self.scheduleUpdate(self.loaded ? -1 : self.config.retryDelay);
-        }
-      }
-    };
-    dataRequest.send();
+    var config = this.config;
+    this.sendSocketNotification("getBusArrivalTimes", config);
   },
 
   /* scheduleUpdate()
@@ -98,7 +73,7 @@ Module.register("{{MM-mtaBusTIme}}", {
 
   getDom: function () {
     var self = this;
-
+    var busArrivalTable = this.busArrivalTable;
     // create element wrapper for show into the module
     var wrapper = document.createElement("div");
     // If this.dataRequest is not empty
@@ -128,10 +103,6 @@ Module.register("{{MM-mtaBusTIme}}", {
     return wrapper;
   },
 
-  getScripts: function () {
-    return [];
-  },
-
   getStyles: function () {
     return ["MM-mtaBusTime.css"];
   },
@@ -145,25 +116,13 @@ Module.register("{{MM-mtaBusTIme}}", {
     };
   },
 
-  processData: function (data) {
-    var self = this;
-    this.dataRequest = data;
-    if (this.loaded === false) {
-      self.updateDom(self.config.animationSpeed);
-    }
-    this.loaded = true;
-
-    // the data if load
-    // send notification to helper
-    this.sendSocketNotification("{{MODULE_NAME}}-NOTIFICATION_TEST", data);
-  },
-
   // socketNotificationReceived from helper
   socketNotificationReceived: function (notification, payload) {
-    if (notification === "{{MODULE_NAME}}-NOTIFICATION_TEST") {
-      // set dataNotification
-      this.dataNotification = payload;
-      this.updateDom();
+    //receives bus arrival data from node_helper.js
+    if (notification === "busArrivalTable") {
+      //upon receipt of successful data transmission, set busArrivalTable to the incoming data
+      this.busArrivalTable = payload;
+      this.updateDom(self.config.fadeSpeed);
     }
   },
 });

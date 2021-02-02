@@ -28,8 +28,8 @@ module.exports = NodeHelper.create({
 
   getArrivalData: function (config) {
     const apiKey = config.apiKey;
-    const stopID = config.stopID;
-    const direction = config.direction;
+    const stopID = config.stops.map((obj) => obj.stopID);
+    const direction = config.stops.map((obj) => obj.direction);
     const busRoute = config.busRoute;
     const busTimeURL = "http://bustime.mta.info/api/siri/stop-monitoring.json";
 
@@ -43,7 +43,7 @@ module.exports = NodeHelper.create({
     };
 
     function handleSuccess(data) {
-      console.log(data);
+      self.sendSocketNotification("busArrivalTable", []);
     }
     function handleFailure(data) {
       console.log("error", data);
@@ -54,5 +54,11 @@ module.exports = NodeHelper.create({
       })
       .then(handleSuccess)
       .catch(handleFailure);
+  },
+
+  socketNotificationReceived: function (notification, config) {
+    if (notification === "getBusArrivalTimes") {
+      this.getArrivalData(config);
+    }
   },
 });
