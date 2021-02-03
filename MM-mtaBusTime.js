@@ -1,7 +1,7 @@
 /* global Module */
 
 /* Magic Mirror
- * Module: {{MM-mta-Bustime}}
+ * Module: MM-mta-Bustime
  *
  * By Fangzhou Yu and Benjamin Huang
  *  MIT Licensed.
@@ -72,34 +72,39 @@ Module.register("MM-mtaBusTIme", {
   },
 
   getDom: function () {
-    var self = this;
-    var busArrivalTable = this.busArrivalTable;
+    var busArrivalTable = this.busArrivalTable; //data variable
+    var stopName = this.stopName;
     // create element wrapper for show into the module
     var wrapper = document.createElement("div");
-    // If this.dataRequest is not empty
-    if (this.dataRequest) {
-      var wrapperDataRequest = document.createElement("div");
-      // check format https://jsonplaceholder.typicode.com/posts/1
-      wrapperDataRequest.innerHTML = this.dataRequest.title;
+    var title = document.createElement("moduleTitle");
+    var busList = document.createElement("listOfBuses");
+    if (busArrivalTable) {
+      if (
+        Object.keys(busArrivalTable).length === 0 &&
+        busArrivalTable.constructor === Object
+      ) {
+        return wrapper; //return wrapper if there is nothing new to update
+      }
 
-      var labelDataRequest = document.createElement("label");
-      // Use translate function
-      //             this id defined in translations files
-      labelDataRequest.innerHTML = this.translate("TITLE");
+      if (!this.loaded) {
+        wrapper.innerHTML = "Gathering BusTime data...";
+        return wrapper;
+      }
 
-      wrapper.appendChild(labelDataRequest);
-      wrapper.appendChild(wrapperDataRequest);
+      title.innerHTML = "Bus Arrivals for " + stopName;
+
+      wrapper.appendChild(title);
     }
 
     // Data from helper
-    if (this.dataNotification) {
+    /* if (this.dataNotification) {
       var wrapperDataNotification = document.createElement("div");
       // translations  + datanotification
       wrapperDataNotification.innerHTML =
         this.translate("UPDATE") + ": " + this.dataNotification.date;
 
       wrapper.appendChild(wrapperDataNotification);
-    }
+    }*/
     return wrapper;
   },
 
@@ -123,6 +128,12 @@ Module.register("MM-mtaBusTIme", {
       //upon receipt of successful data transmission, set busArrivalTable to the incoming data
       this.busArrivalTable = payload;
       this.updateDom(self.config.fadeSpeed);
+    }
+
+    if (notification === "stopName") {
+      this.stopName = payload;
+    } else if (notification === "DOM_OBJECTS_CREATED") {
+      console.log("Dom Objects Created");
     }
   },
 });

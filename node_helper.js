@@ -2,7 +2,7 @@
  * Node Helper: MM-mtaBusTime
  *
  * By Fangzhou Yu and Benjamin Huang
- * {{LICENSE}} Licensed.
+ * MIT Licensed.
  */
 
 var NodeHelper = require("node_helper");
@@ -43,7 +43,17 @@ module.exports = NodeHelper.create({
     };
 
     function handleSuccess(data) {
-      self.sendSocketNotification("busArrivalTable", []);
+      //process the incoming API data in the method and feed it to the core module file
+
+      var busHashMap = [];
+      var stopName = data.stopName;
+
+      //loop through all the buses that came in the api response
+      // then another loop to find all the arrival times
+      // push data into bushHashMap
+      // send socket notifications in a for loop traversing though all stops....each stop has its own hashmap
+      self.sendSocketNotification("stopName", stopName);
+      self.sendSocketNotification("busArrivalTable", busHashMap);
     }
     function handleFailure(data) {
       console.log("error", data);
